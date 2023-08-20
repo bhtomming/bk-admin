@@ -1,0 +1,21 @@
+yarn add v1.22.18
+[1/5] Validating package.json...
+[2/5] Resolving packages...
+[3/5] Fetching packages...
+[4/5] Linking dependencies...
+[5/5] Building fresh packages...
+success Saved lockfile.
+success Saved 2 new dependencies.
+info Direct dependencies
+└─ eslint@8.47.0
+info All dependencies
+├─ @eslint/js@8.47.0
+└─ eslint@8.47.0
+$ max setup
+😄 Hello PRO
+info  - [你知道吗？] 全局数据存储，在 React 之外修改数据怎么办？试试一键上手 valtio，详见 https://umijs.org/docs/max/valtio
+Using openapi Plugin
+info  - generate files
+info  - Preparing...
+$ husky install
+Done in 81.07s.
