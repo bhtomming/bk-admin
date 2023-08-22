@@ -1,16 +1,14 @@
 import {
-  ActionType,
   ModalForm,
   ProFormDateTimePicker,
   ProFormSelect,
   ProFormText,
-  ProFormTextArea, ProFormUploadButton,
+  ProFormTextArea,
+  ProFormUploadButton,
 } from '@ant-design/pro-components';
 import '@umijs/max';
-import {message, UploadFile, UploadProps} from 'antd';
-import React, {useState} from 'react';
-import {upload} from "@/services/ant-design-pro/api";
-import {UploadChangeParam} from "antd/es/upload";
+import { message, UploadFile } from 'antd';
+import React from 'react';
 import type { RcFile } from 'antd/es/upload/interface';
 
 export type FormValueType = {
@@ -24,16 +22,9 @@ export type UpdateFormProps = {
   onCancel: (flag?: boolean, formVals?: FormValueType) => void;
   onSubmit: (values: FormValueType) => Promise<void>;
   updateModalOpen: boolean;
-  values:Partial<API.WorkItem>;
-  onOpenChange:(open:boolean)=>void;
+  values: Partial<API.WorkItem>;
+  onOpenChange: (open: boolean) => void;
   //onFinish:async (values)=>boolean;
-};
-
-
-const getBase64 = (img: RcFile, callback: (url: string) => void) => {
-  const reader = new FileReader();
-  reader.addEventListener('load', () => callback(reader.result as string));
-  reader.readAsDataURL(img);
 };
 
 const beforeUpload = (file: RcFile) => {
@@ -50,23 +41,14 @@ const beforeUpload = (file: RcFile) => {
 
 export const UpdateForm: React.FC<UpdateFormProps> = (props) => {
   //const actionRef = useRef<ActionType>();
-  const [loading, setLoading] = useState(false);
-  const [imageUrl, setImageUrl] = useState<string>();
-  const handleChange: UploadProps['onChange'] = (info: UploadChangeParam<UploadFile>) => {
+  /*const handleChange: UploadProps['onChange'] = (info: UploadChangeParam<UploadFile>) => {
     console.log(info,"fileinfo");
     if (info.file.status === 'uploading') {
-      setLoading(true);
       return;
     }
     if (info.file.status === 'done') {
-      // Get this url from response in real world.
-      setLoading(false);
-      getBase64(info.file.originFileObj as RcFile, (url) => {
-
-        setImageUrl(url);
-      });
     }
-  };
+  };*/
   return (
     <ModalForm
       title={'修改工作信息'}
@@ -77,12 +59,9 @@ export const UpdateForm: React.FC<UpdateFormProps> = (props) => {
       open={props.updateModalOpen}
       onOpenChange={props.onOpenChange}
       onFinish={props.onSubmit}
-      initialValues={{...props.values}} //初始化数据
+      initialValues={{ ...props.values }} //初始化数据
     >
-      <ProFormText
-        name="id"
-        hidden={true}
-      />
+      <ProFormText name="id" hidden={true} />
       <ProFormText
         name="title"
         label="标题"
@@ -101,32 +80,21 @@ export const UpdateForm: React.FC<UpdateFormProps> = (props) => {
         name="type"
         label="请选择工作类型"
       />
-      <ProFormDateTimePicker
-        name="work_time"
-        label="时间"
-      />
+      <ProFormDateTimePicker name="work_time" label="时间" />
       <ProFormText
         name="address"
         label="地点"
         placeholder="工作地点"
-        convertValue={(value)=>{return value.detail} }
-        transform={(value)=>{return {address: {...props.values?.address,detail: value}} }}
+        convertValue={(value) => {
+          return value.detail;
+        }}
+        transform={(value) => {
+          return { address: { ...props.values?.address, detail: value } };
+        }}
       />
-      <ProFormText
-        name="phone"
-        label="电话"
-        placeholder="请输入联系电话"
-      />
-      <ProFormText
-        name="contact"
-        label="联系人"
-        placeholder="请输入联系人"
-      />
-      <ProFormText
-        name="price"
-        label="工资"
-        placeholder="请输入工资"
-      />
+      <ProFormText name="phone" label="电话" placeholder="请输入联系电话" />
+      <ProFormText name="contact" label="联系人" placeholder="请输入联系人" />
+      <ProFormText name="price" label="工资" placeholder="请输入工资" />
       <ProFormUploadButton
         name="imgs"
         label="Upload"
@@ -134,39 +102,25 @@ export const UpdateForm: React.FC<UpdateFormProps> = (props) => {
         fieldProps={{
           name: 'file',
           listType: 'picture-card',
-          beforeUpload
+          beforeUpload,
         }}
         action="/api/upload/upload"
-        onChange={handleChange}
-        transform={(value)=>{
+        // onChange={handleChange}
+        transform={(value) => {
           return {
             imgs: value.map((imgItem: UploadFile) => {
-              return imgItem?.response ? {url: imgItem.response.data?.url, path: imgItem.response.data.path} : imgItem;
-            })
-          }
-        } }
+              return imgItem?.response
+                ? { url: imgItem.response.data?.url, path: imgItem.response.data.path }
+                : imgItem;
+            }),
+          };
+        }}
       />
-      <ProFormTextArea
-        name="context"
-        label="详细工作内容"
-      />
-      <ProFormText
-        name="user_id"
-        hidden={true}
-      />
-      <ProFormText
-        name="master_id"
-        hidden={true}
-      />
-      <ProFormText
-        name="created_at"
-        hidden={true}
-      />
-      <ProFormText
-        name="updated_at"
-        hidden={true}
-      />
-
+      <ProFormTextArea name="context" label="详细工作内容" />
+      <ProFormText name="user_id" hidden={true} />
+      <ProFormText name="master_id" hidden={true} />
+      <ProFormText name="created_at" hidden={true} />
+      <ProFormText name="updated_at" hidden={true} />
     </ModalForm>
   );
 };

@@ -1,7 +1,5 @@
-﻿import type { RequestOptions } from '@@/plugin-request/request';
-import type { RequestConfig } from '@umijs/max';
+﻿import type { RequestConfig } from '@umijs/max';
 import { message, notification } from 'antd';
-import {urlencoded} from "express";
 
 // 错误处理方案： 错误类型
 enum ErrorShowType {
@@ -23,14 +21,23 @@ interface ResponseStructure {
 //认证请求拦截
 const authHeaderInterceptor = (url: string, options: RequestConfig) => {
   let token = JSON.parse(<string>localStorage.getItem('token'));
-  if(options?.method == 'get')
-  {
-    url = url+'?token='+token?.token;
-    return {url: `${url}`,options: {...options,interceptors: true} }
+  if (options?.method === 'get') {
+    //url = url+'?token='+token?.token;
+    return { url: url + '?token=' + token?.token, options: { ...options, interceptors: true } };
   }
   return {
     url: `${url}`,
-    options: { ...options, interceptors: true, data:{...options.data,token:token?.token} },
+    options: { ...options, interceptors: true, data: { ...options.data, token: token?.token } },
+  };
+};
+
+//路径替换请求拦截
+const routerInterceptor = (url: string, options: RequestConfig) => {
+  //url = url.replace('/api/','/admin/');
+
+  return {
+    url: url.replace('/api/', '/admin/'),
+    options: { ...options },
   };
 };
 
@@ -85,6 +92,10 @@ export const errorConfig: RequestConfig = {
           }
         }
       } else if (error.response) {
+        if (error.response.status === 401) {
+          localStorage.removeItem('token');
+          localStorage.removeItem('adminInfo');
+        }
         // Axios 的错误
         // 请求成功发出且服务器也响应了状态码，但状态代码超出了 2xx 的范围
         message.error(`Response status:${error.response.status}`);
@@ -102,8 +113,9 @@ export const errorConfig: RequestConfig = {
 
   // 请求拦截器
   requestInterceptors: [
+    routerInterceptor,
     authHeaderInterceptor,
-   /* (config: RequestOptions) => {
+    /* (config: RequestOptions) => {
       // 拦截请求配置，进行个性化处理。
       console.log(config,"config");
       let token = JSON.parse(<string>localStorage.getItem('token'));
@@ -111,8 +123,6 @@ export const errorConfig: RequestConfig = {
       //let data = { ...config,token: token?.token };
       return { ...config,url};
     }*/
-
-
   ],
 
   // 响应拦截器
@@ -121,12 +131,10 @@ export const errorConfig: RequestConfig = {
       // 拦截响应数据，进行个性化处理
       const { data } = response as unknown as ResponseStructure;
 
-      if (data?.status != 200) {
+      if (data?.status !== 200) {
         message.error('请求失败！');
       }
       return response;
     },
   ],
-
-
 };

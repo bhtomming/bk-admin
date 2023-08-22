@@ -12,6 +12,10 @@ export default defineConfig({
    * @doc https://umijs.org/docs/api/config#hash
    */
   hash: true,
+  history: { type: 'hash' },
+
+  // base: REACT_APP_ENV === 'dev'? '' :'/',
+  publicPath: REACT_APP_ENV === 'dev' ? '' : '/backend/',
   /**
    * @name 兼容性设置
    * @description 设置 ie11 不一定完美兼容，需要检查自己使用的所有依赖
@@ -36,7 +40,8 @@ export default defineConfig({
   theme: {
     // 如果不想要 configProvide 动态设置主题需要把这个设置为 default
     // 只有设置为 variable， 才能使用 configProvide 动态设置主色调
-    'root-entry-name': 'variable',
+    //'root-entry-name': 'variable',
+    'root-entry-name': 'default',
   },
   /**
    * @name moment 的国际化配置
@@ -70,10 +75,10 @@ export default defineConfig({
    */
   initialState: {},
   /**
-   * @name layout 插件
+   * @name layout 插件，管理页面标题
    * @doc https://umijs.org/docs/max/layout-menu
    */
-  title: 'Ant Design Pro',
+  title: '小贝壳后台管理系统',
   layout: {
     locale: true,
     ...defaultSettings,

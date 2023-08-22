@@ -1,24 +1,20 @@
 // @ts-ignore
 /* eslint-disable */
 import { request } from '@umijs/max';
-import {RcFile} from "antd/es/upload/interface";
+import { RcFile } from 'antd/es/upload/interface';
 
 /** 获取当前的用户 GET /api/currentUser */
 export async function currentUser(options?: { [key: string]: any }) {
-  return new Promise<API.CurrentUser>(function(resolve,reject){
-
+  return new Promise<API.CurrentUser>(function (resolve, reject) {
     const userInfo = JSON.parse(<string>localStorage.getItem('adminInfo'));
     const token = JSON.parse(<string>localStorage.getItem('token'));
-    if(userInfo && token?.token_expires > Date.now()/1000)
-    {
+    if (userInfo && token?.token_expires > Date.now() / 1000) {
       resolve(userInfo);
-    }else
-    {
-      localStorage.removeItem("token");
-      localStorage.removeItem("adminInfo")
+    } else {
+      localStorage.removeItem('token');
+      localStorage.removeItem('adminInfo');
       reject(new Error('not access allow 401'));
     }
-
   });
   /*return request<{
     data: API.CurrentUser;
@@ -30,10 +26,14 @@ export async function currentUser(options?: { [key: string]: any }) {
 
 /** 退出登录接口 POST /api/login/outLogin */
 export async function outLogin(options?: { [key: string]: any }) {
-  return request<Record<string, any>>('/api/login/outLogin', {
+  /*let tokenInfo = JSON.parse(<string>localStorage.getItem('token'));
+  options = {...options,data: {token:tokenInfo?.token}}*/
+  localStorage.removeItem('token');
+  localStorage.removeItem('adminInfo');
+  /*return request<Record<string, any>>('/api/login/logout', {
     method: 'POST',
     ...(options || {}),
-  });
+  });*/
 }
 
 /** 登录接口 POST /api/login/account */
@@ -73,7 +73,10 @@ export async function rule(
       ...params,
     },
     ...(options || {}),
-  }).then((res)=>{console.log(res);return res});
+  }).then((res) => {
+    console.log(res);
+    return res;
+  });
 }
 
 /** 新建规则 PUT /api/rule */
@@ -103,8 +106,11 @@ export async function removeRule(options?: { [key: string]: any }) {
 /**上传文件、图片接口***/
 export async function upload(options?: { [key: string]: any }) {
   console.log(options);
-  return request<string | ((file: RcFile) => string) | ((file: RcFile) => PromiseLike<string>)>('/api/upload/upload', {
-    method: 'POST',
-    ...(options || {}),
-  });
+  return request<string | ((file: RcFile) => string) | ((file: RcFile) => PromiseLike<string>)>(
+    '/api/upload/upload',
+    {
+      method: 'POST',
+      ...(options || {}),
+    },
+  );
 }

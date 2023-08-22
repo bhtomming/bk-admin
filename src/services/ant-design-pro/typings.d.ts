@@ -3,16 +3,16 @@
 
 declare namespace API {
   type CurrentUser = {
-    admin_id?:number,
-    create_time?:number,
-    group_id?:number,
-    head_pic?:string,
-    last_ip?:string,
-    last_login?:number,
-    nickname?:string,
-    status?:number,
-    update_time?:number,
-    username?:string,
+    admin_id?: number;
+    create_time?: number;
+    group_id?: number;
+    head_pic?: string;
+    last_ip?: string;
+    last_login?: number;
+    nickname?: string;
+    status?: number;
+    update_time?: number;
+    username?: string;
     /*name?: string;
     avatar?: string;
     userid?: string;
@@ -34,30 +34,30 @@ declare namespace API {
   };
 
   type Token = {
-    group_id?: number,
-    platform?:string,
-    refresh?:string,
-    refresh_expires?:number,
-    token?:string,
-    token_expires?:number,
-    username?:string
+    group_id?: number;
+    platform?: string;
+    refresh?: string;
+    refresh_expires?: number;
+    token?: string;
+    token_expires?: number;
+    username?: string;
   };
 
   type AdminData = {
-    admin?:CurrentUser,
-    token?:Token,
-    admin_group_type?:number,
-    admin_site_id?:number,
-    admin_site_name?:string,
+    admin?: CurrentUser;
+    token?: Token;
+    admin_group_type?: number;
+    admin_site_id?: number;
+    admin_site_name?: string;
   };
 
   type LoginResult = {
     status?: number;
     type?: string;
     currentAuthority?: string;
-    data?: AdminData,
-    tag_code?:number,
-    message?:string,
+    data: AdminData;
+    tag_code?: number;
+    message?: string;
   };
 
   type PageParams = {

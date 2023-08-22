@@ -36,20 +36,21 @@ export default {
   },
   pre: {
     '/api/': {
-      target: 'https://a.no89.cn/admin',
+      target: 'https://test.no89.cn',
       changeOrigin: true,
-      pathRewrite: { '^': '' },
+      pathRewrite: { '^/api': '/admin' },
     },
   },
   dev: {
     // localhost:8000/api/** -> https://preview.pro.ant.design/api/**
-    '/api/': {
+    '/admin/': {
       // 要代理的地址
       target: 'https://test.no89.cn',
       // 配置了这个可以从 http 代理到 https
       // 依赖 origin 的功能可能需要这个，比如 cookie
       changeOrigin: true,
-      pathRewrite: { '^/api': '/admin' },
+      pathRewrite: { '^': '' },
+      //     pathRewrite: { '^/api': '/admin' },
     },
   },
 };

@@ -2,16 +2,14 @@ import {
   ActionType,
   ModalForm,
   ProFormDateTimePicker,
-  ProFormRadio,
   ProFormSelect,
   ProFormText,
   ProFormTextArea,
-  StepsForm,
 } from '@ant-design/pro-components';
 import '@umijs/max';
-import {message, Modal} from 'antd';
-import React, {useRef} from 'react';
-import {addWork} from "@/services/xbk-services/worksApi";
+import { message } from 'antd';
+import React, { useRef } from 'react';
+import { addWork } from '@/services/xbk-services/worksApi';
 
 export type FormValueType = {
   target?: string;
@@ -23,8 +21,8 @@ export type FormValueType = {
 export type CreateFormProps = {
   /*onCancel: (flag?: boolean, formVals?: FormValueType) => void;
   onSubmit: (values: FormValueType) => Promise<void>;*/
-  createModalOpen:boolean;
-  handleModalOpen: (open:boolean)=>void;
+  createModalOpen: boolean;
+  handleModalOpen: (open: boolean) => void;
   //onFinish:async (values)=>boolean;
 };
 /**
@@ -84,36 +82,19 @@ export const CreateForm: React.FC<CreateFormProps> = (props) => {
         name="type"
         label="请选择工作类型"
       />
-      <ProFormDateTimePicker
-        name="work_time"
-        label="时间"
-      />
+      <ProFormDateTimePicker name="work_time" label="时间" />
       <ProFormText
         name="address"
         label="地点"
         placeholder="工作地点"
-        transform={(value)=>{return {address: {detail: value}} }}
+        transform={(value) => {
+          return { address: { detail: value } };
+        }}
       />
-      <ProFormText
-        name="phone"
-        label="电话"
-        placeholder="请输入联系电话"
-      />
-      <ProFormText
-        name="contact"
-        label="联系人"
-        placeholder="请输入联系人"
-      />
-      <ProFormText
-        name="price"
-        label="工资"
-        placeholder="请输入工资"
-      />
-      <ProFormTextArea
-        name="context"
-        label="详细工作内容"
-      />
-
+      <ProFormText name="phone" label="电话" placeholder="请输入联系电话" />
+      <ProFormText name="contact" label="联系人" placeholder="请输入联系人" />
+      <ProFormText name="price" label="工资" placeholder="请输入工资" />
+      <ProFormTextArea name="context" label="详细工作内容" />
     </ModalForm>
   );
 };

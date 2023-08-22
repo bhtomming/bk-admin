@@ -1,18 +1,12 @@
-import { addWork, removeWork, works, updateWork } from '@/services/xbk-services/worksApi';
-import { PlusOutlined } from '@ant-design/icons';
+import { removeWork, works, updateWork } from '@/services/xbk-services/worksApi';
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
-import {
-  FooterToolbar,
-  PageContainer,
-  ProTable,
-} from '@ant-design/pro-components';
+import { FooterToolbar, PageContainer, ProTable } from '@ant-design/pro-components';
 import '@umijs/max';
-import {Alert, Button, message, Modal, UploadFile} from 'antd';
+import { Button, message, Modal } from 'antd';
 import React, { useRef, useState } from 'react';
 import type { FormValueType } from './components/UpdateForm';
 import UpdateForm from './components/UpdateForm';
-import CreateForm from "@/pages/Works/components/CreateForm";
-
+import CreateForm from '@/pages/Works/components/CreateForm';
 
 /**
  * @en-US Update node
@@ -47,7 +41,7 @@ const handleRemove = async (selectedRows: API.WorkItem[]) => {
   if (!selectedRows) return true;
   try {
     await removeWork({
-      data: {id: selectedRows.map((row) => row.id)},
+      data: { id: selectedRows.map((row) => row.id) },
     });
     hide();
     message.success('删除成功，自动刷新');
@@ -69,7 +63,7 @@ const WorkList: React.FC = () => {
    * @zh-CN 分布更新窗口的弹窗
    * */
   const [updateModalOpen, handleUpdateModalOpen] = useState<boolean>(false);
-  const [showDetail, setShowDetail] = useState<boolean>(false);
+  const [showDetail] = useState<boolean>(false);
   const actionRef = useRef<ActionType>();
   const [currentRow, setCurrentRow] = useState<API.WorkItem>();
   const [selectedRowsState, setSelectedRows] = useState<API.WorkItem[]>([]);
@@ -77,8 +71,6 @@ const WorkList: React.FC = () => {
   const [delModalOpen, handleDelModalOpen] = useState<boolean>(false);
   const [sureDel, setSureDel] = useState<boolean>(false);
   const [selectId, setSelectId] = useState<number>(0);
-
-
 
   /**
    * @en-US International configuration
@@ -153,7 +145,7 @@ const WorkList: React.FC = () => {
       title: '操作',
       dataIndex: 'option',
       valueType: 'option',
-      render: (_, record:API.WorkItem) => [
+      render: (_, record: API.WorkItem) => [
         <a
           key="config"
           onClick={() => {
@@ -163,21 +155,23 @@ const WorkList: React.FC = () => {
         >
           修改
         </a>,
-        <a key="del" onClick={async () => {
-          setSelectId(record.id);
-          handleDelModalOpen(true);
-          console.log(sureDel,"suerDel");
-          /*if(sureDel)
+        <a
+          key="del"
+          onClick={async () => {
+            setSelectId(record.id);
+            handleDelModalOpen(true);
+            console.log(sureDel, 'suerDel');
+            /*if(sureDel)
           {
             await removeWork({
               data: {id: record.id},
             });
             actionRef.current?.reloadAndRest?.();
           }*/
-        }}>
+          }}
+        >
           删除
         </a>,
-
       ],
     },
   ];
@@ -190,7 +184,7 @@ const WorkList: React.FC = () => {
         search={{
           labelWidth: 120,
         }}
-        toolBarRender={() => [
+        /*toolBarRender={() => [
           <Button
             type="primary"
             key="primary"
@@ -200,7 +194,7 @@ const WorkList: React.FC = () => {
           >
             <PlusOutlined /> 发布工作
           </Button>,
-        ]}
+        ]}*/
         request={works}
         columns={columns}
         rowSelection={{
@@ -222,7 +216,6 @@ const WorkList: React.FC = () => {
                 {selectedRowsState.length}
               </a>{' '}
               项 &nbsp;&nbsp;
-
             </div>
           }
         >
@@ -238,10 +231,7 @@ const WorkList: React.FC = () => {
           {/*<Button type="primary">批量审批</Button>*/}
         </FooterToolbar>
       )}
-      <CreateForm
-        createModalOpen={createModalOpen}
-        handleModalOpen={handleModalOpen}
-      />
+      <CreateForm createModalOpen={createModalOpen} handleModalOpen={handleModalOpen} />
 
       <UpdateForm
         onSubmit={async (value) => {
@@ -267,25 +257,21 @@ const WorkList: React.FC = () => {
       <Modal
         title="删除提示"
         visible={delModalOpen}
-        onOk={async ()=>{
+        onOk={async () => {
           setSureDel(true);
           handleDelModalOpen(false);
           await removeWork({
-            data: {id: selectId},
+            data: { id: selectId },
           });
           actionRef.current?.reloadAndRest?.();
         }}
-        onCancel={()=>{
+        onCancel={() => {
           setSureDel(false);
           handleDelModalOpen(false);
-        } }
+        }}
       >
         <p>是否要删除该信息</p>
       </Modal>
-
-
-
-
     </PageContainer>
   );
 };

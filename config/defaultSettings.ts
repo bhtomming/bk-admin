@@ -15,10 +15,10 @@ const Settings: ProLayoutProps & {
   fixedHeader: false,
   fixSiderbar: true,
   colorWeak: false,
-  title: 'Ant Design Pro',
+  title: '小贝壳管理系统',
   pwa: true,
-  logo: 'https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg',
-  iconfontUrl: '',
+  logo: 'https://a.no89.cn/favicon.ico',
+  iconfontUrl: 'favicon.ico',
   //menu:{locale:false},
   token: {
     // 参见ts声明，demo 见文档，通过token 修改样式
