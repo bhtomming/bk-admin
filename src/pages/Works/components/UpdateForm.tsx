@@ -10,6 +10,7 @@ import '@umijs/max';
 import { message, UploadFile } from 'antd';
 import React from 'react';
 import type { RcFile } from 'antd/es/upload/interface';
+import { workTypeList } from '@/services/xbk-services/workType';
 
 export type FormValueType = {
   target?: string;
@@ -40,15 +41,15 @@ const beforeUpload = (file: RcFile) => {
 };
 
 export const UpdateForm: React.FC<UpdateFormProps> = (props) => {
-  //const actionRef = useRef<ActionType>();
-  /*const handleChange: UploadProps['onChange'] = (info: UploadChangeParam<UploadFile>) => {
-    console.log(info,"fileinfo");
-    if (info.file.status === 'uploading') {
-      return;
-    }
-    if (info.file.status === 'done') {
-    }
-  };*/
+  //动态获取选择项的数据
+  const selects = async () => {
+    return await workTypeList().then((res) => {
+      return res.data.map((item: API.WorkTypeItem) => {
+        return { label: item.name, value: item.id };
+      });
+    });
+  };
+
   return (
     <ModalForm
       title={'修改工作信息'}
@@ -62,24 +63,14 @@ export const UpdateForm: React.FC<UpdateFormProps> = (props) => {
       initialValues={{ ...props.values }} //初始化数据
     >
       <ProFormText name="id" hidden={true} />
+
       <ProFormText
         name="title"
         label="标题"
         tooltip="工作名称作为信息标题"
         placeholder="请输入工作标题"
       />
-      <ProFormSelect
-        width="md"
-        request={async () => [
-          { label: '代丢垃圾', value: 0 },
-          { label: '代拉送货品', value: 1 },
-          { label: '代驾', value: 2 },
-          { label: '送车', value: 3 },
-          { label: '其他', value: 4 },
-        ]}
-        name="type"
-        label="请选择工作类型"
-      />
+      <ProFormSelect width="md" request={selects} name="type" label="请选择工作类型" />
       <ProFormDateTimePicker name="work_time" label="时间" />
       <ProFormText
         name="address"
@@ -89,7 +80,9 @@ export const UpdateForm: React.FC<UpdateFormProps> = (props) => {
           return value.detail;
         }}
         transform={(value) => {
-          return { address: { ...props.values?.address, detail: value } };
+          return typeof value === 'object'
+            ? { address: value }
+            : { address: { ...props.values?.address, detail: value } };
         }}
       />
       <ProFormText name="phone" label="电话" placeholder="请输入联系电话" />
@@ -116,7 +109,8 @@ export const UpdateForm: React.FC<UpdateFormProps> = (props) => {
           };
         }}
       />
-      <ProFormTextArea name="context" label="详细工作内容" />
+      <ProFormTextArea name="content" label="详细工作内容" />
+      <ProFormText name="status" hidden={true} />
       <ProFormText name="user_id" hidden={true} />
       <ProFormText name="master_id" hidden={true} />
       <ProFormText name="created_at" hidden={true} />

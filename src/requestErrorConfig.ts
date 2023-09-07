@@ -1,5 +1,7 @@
 ﻿import type { RequestConfig } from '@umijs/max';
 import { message, notification } from 'antd';
+import { history } from '@@/core/history';
+const loginPath = '/user/login';
 
 // 错误处理方案： 错误类型
 enum ErrorShowType {
@@ -11,8 +13,10 @@ enum ErrorShowType {
 }
 // 与后端约定的响应数据格式
 interface ResponseStructure {
-  success: boolean;
+  success?: boolean;
   data: any;
+  //message?: string;
+  //status:number;
   errorCode?: number;
   errorMessage?: string;
   showType?: ErrorShowType;
@@ -92,9 +96,11 @@ export const errorConfig: RequestConfig = {
           }
         }
       } else if (error.response) {
+        //401处理
         if (error.response.status === 401) {
           localStorage.removeItem('token');
           localStorage.removeItem('adminInfo');
+          history.push(loginPath);
         }
         // Axios 的错误
         // 请求成功发出且服务器也响应了状态码，但状态代码超出了 2xx 的范围

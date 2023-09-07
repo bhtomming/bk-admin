@@ -1,13 +1,23 @@
-import { removeWork, works, updateWork } from '@/services/xbk-services/worksApi';
+import {
+  removeWorkType,
+  workTypeList,
+  updateWorkType,
+  addWorkType,
+} from '@/services/xbk-services/workType';
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
-import { FooterToolbar, PageContainer, ProTable } from '@ant-design/pro-components';
+import {
+  FooterToolbar,
+  ModalForm,
+  PageContainer,
+  ProFormText,
+  ProTable,
+} from '@ant-design/pro-components';
 import '@umijs/max';
 import { Button, message, Modal } from 'antd';
 import React, { useRef, useState } from 'react';
 import type { FormValueType } from './components/UpdateForm';
 import UpdateForm from './components/UpdateForm';
-import CreateForm from '@/pages/Works/components/CreateForm';
-import { workTypeList } from '@/services/xbk-services/workType';
+import { PlusOutlined } from '@ant-design/icons';
 
 /**
  * @en-US Update node
@@ -18,7 +28,7 @@ import { workTypeList } from '@/services/xbk-services/workType';
 const handleUpdate = async (fields: FormValueType) => {
   const hide = message.loading('正在更新...');
   try {
-    await updateWork({
+    await updateWorkType({
       ...fields,
     });
     hide();
@@ -37,11 +47,11 @@ const handleUpdate = async (fields: FormValueType) => {
  *
  * @param selectedRows
  */
-const handleRemove = async (selectedRows: API.WorkItem[]) => {
+const handleRemove = async (selectedRows: API.WorkTypeItem[]) => {
   const hide = message.loading('正在删除');
   if (!selectedRows) return true;
   try {
-    await removeWork({
+    await removeWorkType({
       data: { id: selectedRows.map((row) => row.id) },
     });
     hide();
@@ -53,7 +63,7 @@ const handleRemove = async (selectedRows: API.WorkItem[]) => {
     return false;
   }
 };
-const WorkList: React.FC = () => {
+const WorkTypeList: React.FC = () => {
   /**
    * @en-US Pop-up window of new window
    * @zh-CN 新建窗口的弹窗
@@ -66,124 +76,60 @@ const WorkList: React.FC = () => {
   const [updateModalOpen, handleUpdateModalOpen] = useState<boolean>(false);
   const [showDetail] = useState<boolean>(false);
   const actionRef = useRef<ActionType>();
-  const [currentRow, setCurrentRow] = useState<API.WorkItem>();
-  const [selectedRowsState, setSelectedRows] = useState<API.WorkItem[]>([]);
+  const [currentRow, setCurrentRow] = useState<API.WorkTypeItem>();
+  const [selectedRowsState, setSelectedRows] = useState<API.WorkTypeItem[]>([]);
 
   const [delModalOpen, handleDelModalOpen] = useState<boolean>(false);
   const [sureDel, setSureDel] = useState<boolean>(false);
   const [selectId, setSelectId] = useState<number>(0);
 
   /**
+   * @en-US Add node
+   * @zh-CN 添加节点
+   * @param fields
+   */
+  const handleAdd = async (fields: API.WorkTypeItem) => {
+    const hide = message.loading('正在添加');
+    try {
+      await addWorkType({
+        ...fields,
+      });
+      hide();
+      message.success('添加成功');
+      return true;
+    } catch (error) {
+      hide();
+      message.error('添加失败，稍后再试！');
+      return false;
+    }
+  };
+
+  /**
    * @en-US International configuration
    * @zh-CN 国际化配置
    * */
 
-  //枚举数据转换
-  const workTypeSelect = {};
-  const getWorkTypes = async (): Promise<{}> => {
-    return await workTypeList().then((res) => {
-      res.data.reduce(
-        (obj: object, item: API.WorkTypeItem) => (
-          (obj[item.id] = { text: item.name }), workTypeSelect
-        ),
-        workTypeSelect,
-      );
-
-      return workTypeSelect;
-    });
-  };
-
-  //刷新数据
-  const getWorks = async (
-    params: {
-      // query
-      /** 当前的页码 */
-      current?: number;
-      /** 页面的容量 */
-      pageSize?: number;
-      /** 当前的页码 */
-      page_no?: number;
-      /** 页面的容量 */
-      page_size?: number;
-      keyword?: string;
-      status?: number;
-    },
-    options?: { [key: string]: any },
-  ): Promise<any> => {
-    getWorkTypes().then();
-    return works(params, options);
-  };
-
-  const columns: ProColumns<API.WorkItem>[] = [
+  const columns: ProColumns<API.WorkTypeItem>[] = [
     {
-      title: 'id',
+      title: '编号',
       dataIndex: 'id',
       sorter: true,
-      tip: '工作id',
+      tip: '编号',
       search: false,
     },
     {
-      title: '标题',
-      dataIndex: 'title',
+      title: '名称',
+      dataIndex: 'name',
     },
     {
-      title: '工作类型',
-      dataIndex: 'type',
-      valueEnum: workTypeSelect,
-      /*valueEnum: {
-        0: {
-          text: '代丢垃圾',
-        },
-        1: {
-          text: '代拉送货品',
-        },
-        2: {
-          text: '代驾',
-        },
-        3: {
-          text: '送车',
-        },
-        4: {
-          text: '其他',
-        },
-      },*/
-    },
-    {
-      title: '联系人',
-      dataIndex: 'contact',
-    },
-    {
-      title: '联系电话',
-      dataIndex: 'phone',
-    },
-    {
-      title: '状态',
-      dataIndex: 'status',
-      valueEnum: {
-        0: {
-          text: '待接单',
-        },
-        1: {
-          text: '工作中',
-        },
-        2: {
-          text: '已完成',
-        },
-        3: {
-          text: '未知',
-        },
-      },
-    },
-    {
-      title: '发布时间',
-      dataIndex: 'created_at',
-      valueType: 'dateTime',
+      title: '描述',
+      dataIndex: 'description',
     },
     {
       title: '操作',
       dataIndex: 'option',
       valueType: 'option',
-      render: (_, record: API.WorkItem) => [
+      render: (_, record: API.WorkTypeItem) => [
         <a
           key="config"
           onClick={() => {
@@ -198,13 +144,7 @@ const WorkList: React.FC = () => {
           onClick={async () => {
             setSelectId(record.id);
             handleDelModalOpen(true);
-            /*if(sureDel)
-          {
-            await removeWork({
-              data: {id: record.id},
-            });
-            actionRef.current?.reloadAndRest?.();
-          }*/
+            console.log(sureDel, 'suerDel');
           }}
         >
           删除
@@ -214,14 +154,21 @@ const WorkList: React.FC = () => {
   ];
   return (
     <PageContainer>
-      <ProTable<API.WorkItem, API.PageParams>
+      <ProTable<API.WorkTypeItem, API.PageParams>
         headerTitle={'已发工作列表'}
         actionRef={actionRef}
         rowKey="id"
         search={{
           labelWidth: 120,
         }}
-        /*toolBarRender={() => [
+        request={workTypeList}
+        columns={columns}
+        rowSelection={{
+          onChange: (_, selectedRows) => {
+            setSelectedRows(selectedRows);
+          },
+        }}
+        toolBarRender={() => [
           <Button
             type="primary"
             key="primary"
@@ -229,16 +176,9 @@ const WorkList: React.FC = () => {
               handleModalOpen(true);
             }}
           >
-            <PlusOutlined /> 发布工作
+            <PlusOutlined /> 添加
           </Button>,
-        ]}*/
-        request={getWorks}
-        columns={columns}
-        rowSelection={{
-          onChange: (_, selectedRows) => {
-            setSelectedRows(selectedRows);
-          },
-        }}
+        ]}
       />
       {selectedRowsState?.length > 0 && (
         <FooterToolbar
@@ -265,10 +205,35 @@ const WorkList: React.FC = () => {
           >
             批量删除
           </Button>
-          {/*<Button type="primary">批量审批</Button>*/}
         </FooterToolbar>
       )}
-      <CreateForm createModalOpen={createModalOpen} handleModalOpen={handleModalOpen} />
+
+      <ModalForm
+        title={'添加工作类型'}
+        width="900px"
+        modalProps={{
+          destroyOnClose: true,
+        }}
+        open={createModalOpen}
+        onOpenChange={handleModalOpen}
+        onFinish={async (value) => {
+          const success = await handleAdd(value as API.WorkTypeItem);
+          if (success) {
+            handleModalOpen(false);
+            if (actionRef.current) {
+              actionRef.current.reload();
+            }
+          }
+        }}
+      >
+        <ProFormText
+          name="name"
+          label="名称"
+          tooltip="工作类型名称"
+          placeholder="请输入工作类型名称"
+        />
+        <ProFormText name="description" label="描述" placeholder="描述工作类型" />
+      </ModalForm>
 
       <UpdateForm
         onSubmit={async (value) => {
@@ -293,11 +258,11 @@ const WorkList: React.FC = () => {
       />
       <Modal
         title="删除提示"
-        open={delModalOpen}
+        visible={delModalOpen}
         onOk={async () => {
           setSureDel(true);
           handleDelModalOpen(false);
-          await removeWork({
+          await removeWorkType({
             data: { id: selectId },
           });
           actionRef.current?.reloadAndRest?.();
@@ -312,4 +277,4 @@ const WorkList: React.FC = () => {
     </PageContainer>
   );
 };
-export default WorkList;
+export default WorkTypeList;

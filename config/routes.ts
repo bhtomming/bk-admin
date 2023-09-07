@@ -22,6 +22,7 @@ export default [
     routes: [
       { path: '/user-business', redirect: '/user-business/works' },
       { path: '/user-business/works', component: './Works', name: '工作信息' },
+      { path: '/user-business/work_type', component: './WorkType', name: '工作类型' },
     ],
   },
   { path: '/', redirect: '/user-business' },
